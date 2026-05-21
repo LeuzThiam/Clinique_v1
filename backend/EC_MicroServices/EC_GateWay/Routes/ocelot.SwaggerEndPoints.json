@@ -5,7 +5,7 @@
       "TransformByOcelotConfig": false,
       "Config": [
         {
-          "Name": "Users Service (API REST)",
+          "Name": "Service Utilisateur (API REST)",
           "Version": "1.0",
           "Url": "http://localhost:5001/swagger/v1/swagger.json"
         }
@@ -16,9 +16,20 @@
       "TransformByOcelotConfig": false,
       "Config": [
         {
-          "Name": "Products Service (API REST)",
+          "Name": "Service Produit (API REST)",
           "Version": "1.0",
           "Url": "http://localhost:5002/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "carts",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "Service Panier (API REST)",
+          "Version": "1.0",
+          "Url": "http://localhost:5005/swagger/v1/swagger.json"
         }
       ]
     },
@@ -27,7 +38,7 @@
       "TransformByOcelotConfig": false,
       "Config": [
         {
-          "Name": "Orders Service (API REST)",
+          "Name": "Service Commande (API REST)",
           "Version": "1.0",
           "Url": "http://localhost:5003/swagger/v1/swagger.json"
         }
@@ -38,7 +49,7 @@
       "TransformByOcelotConfig": false,
       "Config": [
         {
-          "Name": "Payments Service (API REST)",
+          "Name": "Service Paiement (API REST)",
           "Version": "1.0",
           "Url": "http://localhost:5004/swagger/v1/swagger.json"
         }

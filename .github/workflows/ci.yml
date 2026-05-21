@@ -1,4 +1,4 @@
-name: CI
+name: Integration Continue
 
 on:
   push:
@@ -12,22 +12,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
+      - name: Recuperer le depot
         uses: actions/checkout@v6
 
-      - name: Setup .NET
+      - name: Installer .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.0.x
 
-      - name: Restore frontend
+      - name: Restaurer le frontend
         run: dotnet restore frontend/MaBoutique/MaBoutique.sln
 
-      - name: Restore backend
+      - name: Restaurer le backend
         run: dotnet restore backend/EC_MicroServices/EC_MicroServices.sln
 
-      - name: Build frontend
+      - name: Compiler le frontend
         run: dotnet build frontend/MaBoutique/MaBoutique.sln --configuration Release --no-restore
 
-      - name: Build backend
+      - name: Compiler le backend
         run: dotnet build backend/EC_MicroServices/EC_MicroServices.sln --configuration Release --no-restore

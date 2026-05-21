@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EC_User_Service", "EC_User_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EC_Order_Service", "EC_Order_Service\EC_Order_Service.csproj", "{F97B9BFA-49C0-4D7E-B9B0-89295C4C76D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EC_Cart_Service", "EC_Cart_Service\EC_Cart_Service.csproj", "{6D5089BB-5B0D-45C7-A838-E647ED001A0C}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EC_Product_Service", "EC_Product_Service\EC_Product_Service.csproj", "{2E6EEBC0-8F03-436C-A156-35A4EB2AFFAA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EC_Payment_Service", "EC_Payment_Service\EC_Payment_Service.csproj", "{E8F49115-1A8F-4923-8B88-F11AB935D8AA}"
@@ -31,6 +33,10 @@ Global
 		{F97B9BFA-49C0-4D7E-B9B0-89295C4C76D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F97B9BFA-49C0-4D7E-B9B0-89295C4C76D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F97B9BFA-49C0-4D7E-B9B0-89295C4C76D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D5089BB-5B0D-45C7-A838-E647ED001A0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D5089BB-5B0D-45C7-A838-E647ED001A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D5089BB-5B0D-45C7-A838-E647ED001A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D5089BB-5B0D-45C7-A838-E647ED001A0C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2E6EEBC0-8F03-436C-A156-35A4EB2AFFAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2E6EEBC0-8F03-436C-A156-35A4EB2AFFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E6EEBC0-8F03-436C-A156-35A4EB2AFFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU

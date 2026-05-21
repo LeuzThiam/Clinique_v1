@@ -1,54 +1,82 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using MaBoutique.Models;
-using System.Linq;
+using MaBoutique.Services;
+using MaBoutique.Services.ApiModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MaBoutique.Controllers
 {
     public class FacturesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IOrderApiClient _orderApiClient;
+        private readonly IUserApiClient _userApiClient;
 
-        public FacturesController(ApplicationDbContext context)
+        public FacturesController(IOrderApiClient orderApiClient, IUserApiClient userApiClient)
         {
-            _context = context;
+            _orderApiClient = orderApiClient;
+            _userApiClient = userApiClient;
         }
 
-        // GET: /Factures/
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // Exemple : récupérer toutes les factures (tu pourras filtrer par utilisateur connecté plus tard)
-            var factures = _context.Factures
-                .Select(f => new Facture
-                {
-                    Id = f.Id,
-                    DateFacturation = f.DateFacturation,
-                    NumeroFacture = f.NumeroFacture,
-                    MontantTotal = f.MontantTotal,
-                    Utilisateur = f.Utilisateur
-                })
+            var utilisateurId = GetCurrentUserId();
+            var utilisateur = await _userApiClient.GetByIdAsync(utilisateurId);
+            var commandes = await _orderApiClient.GetOrdersAsync(utilisateurId);
+
+            var factures = commandes
+                .Select(order => MapFacture(order, utilisateur))
                 .ToList();
 
             return View(factures);
         }
 
-        // GET: /Factures/Details/5
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var facture = _context.Factures
-                .Where(f => f.Id == id)
-                .FirstOrDefault();
+            var utilisateurId = GetCurrentUserId();
+            var utilisateur = await _userApiClient.GetByIdAsync(utilisateurId);
+            var commande = await _orderApiClient.GetOrderAsync(id);
 
-            if (facture == null)
+            if (commande == null)
+            {
                 return NotFound();
+            }
 
-            return View(facture);
+            return View(MapFacture(commande, utilisateur));
         }
 
-        // GET: /Factures/TelechargerPdf/5
         public IActionResult TelechargerPdf(int id)
         {
-            // Ici, tu pourrais générer le PDF plus tard
             return RedirectToAction("Details", new { id });
+        }
+
+        private int GetCurrentUserId()
+        {
+            return HttpContext.Session.GetInt32("UtilisateurId") ?? 1;
+        }
+
+        private static Facture MapFacture(OrderApiModel commande, Utilisateur? utilisateur)
+        {
+            return new Facture
+            {
+                Id = commande.Id,
+                CommandeId = commande.Id,
+                NumeroFacture = $"FAC-{commande.Id:D6}",
+                DateFacturation = commande.DateCommande,
+                MontantTotal = commande.Total,
+                UtilisateurId = commande.UtilisateurId,
+                Utilisateur = utilisateur,
+                ArticlesFactures = commande.ArticlesCommandes.Select(item => new ArticleCommande
+                {
+                    ProduitId = item.ProduitId,
+                    Quantite = item.Quantite,
+                    PrixUnitaire = item.PrixUnitaire,
+                    Produit = new Produit
+                    {
+                        Id = item.ProduitId,
+                        Nom = item.NomProduit,
+                        Prix = item.PrixUnitaire
+                    }
+                }).ToList()
+            };
         }
     }
 }

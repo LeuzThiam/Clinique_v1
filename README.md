@@ -1,9 +1,13 @@
 # ECommerce
 
-Projet e-commerce C# structure en deux zones principales a la racine :
+Application e-commerce developpee en C# avec une architecture separee entre interface web, passerelle API et microservices metier.
+
+## Vue d'ensemble
+
+Le depot est organise en deux parties principales :
 
 - `frontend/` : application web ASP.NET Core MVC `MaBoutique`
-- `backend/` : API Gateway Ocelot et microservices `users`, `products`, `orders`, `payments`
+- `backend/` : passerelle Ocelot et microservices `utilisateurs`, `produits`, `panier`, `commandes`, `paiement`
 
 ## Structure
 
@@ -27,9 +31,28 @@ ECommerce/
 - .NET 9
 - ASP.NET Core MVC
 - Razor Views
-- Entity Framework Core
-- Ocelot Gateway
+- Ocelot
+- Docker / Docker Compose
+- SQL Server
 - Stripe
+
+## Architecture
+
+Architecture active du projet :
+
+- `Frontend ASP.NET Core MVC` pour l'interface utilisateur
+- `API Gateway Ocelot` comme point d'entree unique
+- `Service Utilisateur` pour l'inscription, la connexion et les profils
+- `Service Produit` pour le catalogue
+- `Service Panier` pour la gestion du panier
+- `Service Commande` pour les commandes
+- `Service Paiement` pour l'integration Stripe
+
+Flux vise :
+
+`Utilisateur -> Frontend MVC -> Gateway -> Microservices`
+
+Le frontend `MaBoutique` consomme les API backend via la passerelle exposee sur `http://localhost:5000`.
 
 ## Lancement local
 
@@ -48,97 +71,86 @@ cd backend/EC_MicroServices
 dotnet build EC_MicroServices.sln
 dotnet run --project EC_User_Service/EC_User_Service.csproj
 dotnet run --project EC_Product_Service/EC_Product_Service.csproj
+dotnet run --project EC_Cart_Service/EC_Cart_Service.csproj
 dotnet run --project EC_Order_Service/EC_Order_Service.csproj
 dotnet run --project EC_Payment_Service/EC_Payment_Service.csproj
 dotnet run --project EC_GateWay/EC_GateWay.csproj
 ```
 
-## Lancement Docker
+## Lancement avec Docker
 
-Le projet contient maintenant :
+Fichiers utilises :
 
 - `docker-compose.yml`
 - `docker/dotnet-service.Dockerfile`
 - `.dockerignore`
 
-Pour lancer toute la stack :
+Preparation :
 
 ```powershell
 Copy-Item .env.example .env
-docker compose up --build
 ```
 
-Puis remplace dans `.env` :
+Renseigne ensuite dans `.env` :
 
 - `SQL_SA_PASSWORD`
 - `STRIPE_SECRET_KEY`
 - `STRIPE_PUBLISHABLE_KEY`
 
-Services exposes :
+Puis lance la stack :
+
+```powershell
+docker compose up --build
+```
+
+Si ta machine utilise encore l'ancienne commande :
+
+```powershell
+docker-compose up --build
+```
+
+## Adresses par defaut
 
 - Frontend : `http://localhost:5212`
 - Gateway : `http://localhost:5000`
-- Users : `http://localhost:5001`
-- Products : `http://localhost:5002`
-- Orders : `http://localhost:5003`
-- Payments : `http://localhost:5004`
-
-Avant un vrai test Stripe, configure les valeurs dans `.env`.
+- Service Utilisateur : `http://localhost:5001`
+- Service Produit : `http://localhost:5002`
+- Service Commande : `http://localhost:5003`
+- Service Paiement : `http://localhost:5004`
+- Service Panier : `http://localhost:5005`
 
 La stack Docker utilise un conteneur SQL Server partage par :
 
 - `frontend/MaBoutique`
 - `backend/EC_MicroServices/EC_Product_Service`
 
-## URLs par defaut
-
-- Frontend : `http://localhost:5212`
-- Gateway : `http://localhost:5000`
-- Users : `http://localhost:5001`
-- Products : `http://localhost:5002`
-- Orders : `http://localhost:5003`
-- Payments : `http://localhost:5004`
-
-## Architecture
-
-Architecture active du dépôt :
-
-- `Frontend ASP.NET Core MVC` pour l'interface utilisateur
-- `API Gateway Ocelot` comme point d'entrée unique
-- `User Service` pour les comptes et l'authentification
-- `Product Service` pour le catalogue produits
-- `Order Service` pour les commandes
-- `Payment Service` pour les paiements Stripe
-
-Le frontend `MaBoutique` consomme les microservices backend via la passerelle Ocelot (`http://localhost:5000`).
-
-Note : le dépôt a été nettoyé pour ne garder que les services réellement branchés à la solution, au gateway, à Docker et à la CI.
-
 ## Configuration Stripe
 
-Le service de paiement lit ses cles dans :
+Le service de paiement lit ses cles depuis :
 
 - `backend/EC_MicroServices/EC_Payment_Service/appsettings.json`
 
-Remplace les placeholders :
+Valeurs a remplacer en environnement reel :
 
 - `CHANGE_ME_STRIPE_SECRET_KEY`
 - `CHANGE_ME_STRIPE_PUBLISHABLE_KEY`
 
-## GitHub
+## Integration GitHub
 
-Fichiers racine ajoutes pour preparer le depot :
+Le depot est prepare pour GitHub avec :
 
 - `.gitignore`
 - `README.md`
 - `.github/workflows/ci.yml`
 
-Le workflow GitHub Actions restaure et build :
+Le workflow GitHub Actions :
 
-- le frontend `MaBoutique`
-- le backend `EC_MicroServices`
+- restaure le frontend `MaBoutique`
+- restaure le backend `EC_MicroServices`
+- build le frontend
+- build le backend
 
-Le workflow utilise maintenant :
+Actions utilisees :
 
 - `actions/checkout@v6`
 - `actions/setup-dotnet@v5`

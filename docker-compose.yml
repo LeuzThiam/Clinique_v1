@@ -52,6 +52,19 @@ services:
     ports:
       - "5003:8080"
 
+  cart-service:
+    build:
+      context: .
+      dockerfile: docker/dotnet-service.Dockerfile
+      args:
+        PROJECT_PATH: backend/EC_MicroServices/EC_Cart_Service/EC_Cart_Service.csproj
+        APP_DLL: EC_Cart_Service.dll
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    ports:
+      - "5005:8080"
+
   payment-service:
     build:
       context: .
@@ -83,6 +96,7 @@ services:
     depends_on:
       - user-service
       - product-service
+      - cart-service
       - order-service
       - payment-service
 

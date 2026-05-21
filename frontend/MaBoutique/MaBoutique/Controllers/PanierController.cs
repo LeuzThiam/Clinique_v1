@@ -1,24 +1,24 @@
 using MaBoutique.Models;
 using MaBoutique.Services;
+using MaBoutique.Services.ApiModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MaBoutique.Controllers
 {
     public class PanierController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICartApiClient _cartApiClient;
         private readonly IProductApiClient _productApiClient;
 
-        public PanierController(ApplicationDbContext context, IProductApiClient productApiClient)
+        public PanierController(ICartApiClient cartApiClient, IProductApiClient productApiClient)
         {
-            _context = context;
+            _cartApiClient = cartApiClient;
             _productApiClient = productApiClient;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var panier = ObtenirPanier();
+            var panier = await GetPanierAsync();
 
             var total = panier.ArticlesPaniers.Sum(a => (a.Produit?.Prix ?? 0m) * a.Quantite);
             ViewBag.Total = total;
@@ -30,96 +30,75 @@ namespace MaBoutique.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Ajouter(int idProduit, int quantite = 1)
         {
-            var produit = _context.Produits.Find(idProduit);
-            if (produit == null)
-            {
-                try
-                {
-                    var remoteProduct = await _productApiClient.GetProduitAsync(idProduit);
-                    if (remoteProduct != null)
-                    {
-                        produit = new Produit
-                        {
-                            Id = remoteProduct.Id,
-                            Nom = remoteProduct.Nom,
-                            Description = remoteProduct.Description,
-                            Prix = remoteProduct.Prix,
-                            UrlImage = remoteProduct.UrlImage,
-                            CategorieNom = remoteProduct.CategorieNom,
-                            VendeurId = remoteProduct.VendeurId
-                        };
-
-                        _context.Produits.Add(produit);
-                        await _context.SaveChangesAsync();
-                    }
-                }
-                catch
-                {
-                }
-            }
-
+            var produit = await _productApiClient.GetProduitAsync(idProduit);
             if (produit == null)
             {
                 return NotFound();
             }
 
-            var panier = ObtenirPanier();
+            var cart = await _cartApiClient.AddItemAsync(GetCurrentUserId(), new UpsertCartItemApiModel
+            {
+                ProduitId = produit.Id,
+                Quantite = quantite,
+                NomProduit = produit.Nom,
+                PrixUnitaire = produit.Prix,
+                UrlImage = produit.UrlImage
+            });
 
-            var article = panier.ArticlesPaniers.FirstOrDefault(a => a.ProduitId == idProduit);
-            if (article != null)
+            if (cart == null)
             {
-                article.Quantite += quantite;
-                _context.ArticlesPaniers.Update(article);
-            }
-            else
-            {
-                panier.ArticlesPaniers.Add(new ArticlePanier
-                {
-                    ProduitId = idProduit,
-                    Quantite = quantite,
-                    PanierId = panier.Id
-                });
+                return StatusCode(StatusCodes.Status502BadGateway);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Supprimer(int idProduit)
+        public async Task<IActionResult> Supprimer(int idProduit)
         {
-            var panier = ObtenirPanier();
-
-            var article = panier.ArticlesPaniers.FirstOrDefault(a => a.ProduitId == idProduit);
-            if (article != null)
-            {
-                _context.ArticlesPaniers.Remove(article);
-                _context.SaveChanges();
-            }
-
+            await _cartApiClient.RemoveItemAsync(GetCurrentUserId(), idProduit);
             return RedirectToAction(nameof(Index));
         }
 
-        private Panier ObtenirPanier()
+        private async Task<Panier> GetPanierAsync()
         {
-            var panier = _context.Paniers
-                .Include(p => p.ArticlesPaniers)
-                .ThenInclude(ap => ap.Produit)
-                .FirstOrDefault();
-
-            if (panier == null)
+            var cart = await _cartApiClient.GetCartAsync(GetCurrentUserId());
+            if (cart == null)
             {
-                panier = new Panier
+                return new Panier
                 {
+                    IdUtilisateur = GetCurrentUserId(),
                     ArticlesPaniers = new List<ArticlePanier>()
                 };
-
-                _context.Paniers.Add(panier);
-                _context.SaveChanges();
             }
 
-            return panier;
+            return new Panier
+            {
+                IdUtilisateur = cart.UtilisateurId,
+                ArticlesPaniers = cart.Articles.Select(MapArticle).ToList()
+            };
+        }
+
+        private int GetCurrentUserId()
+        {
+            return HttpContext.Session.GetInt32("UtilisateurId") ?? 1;
+        }
+
+        private static ArticlePanier MapArticle(CartItemApiModel item)
+        {
+            return new ArticlePanier
+            {
+                ProduitId = item.ProduitId,
+                Quantite = item.Quantite,
+                Produit = new Produit
+                {
+                    Id = item.ProduitId,
+                    Nom = item.NomProduit,
+                    Prix = item.PrixUnitaire,
+                    UrlImage = item.UrlImage
+                }
+            };
         }
     }
 }
