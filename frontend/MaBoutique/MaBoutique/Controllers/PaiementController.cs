@@ -122,7 +122,7 @@ namespace MaBoutique.Controllers
                 .ThenInclude(a => a.Produit)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            var total = panier?.ArticlesPaniers.Sum(article => article.Produit.Prix * article.Quantite) ?? 0M;
+            var total = panier?.ArticlesPaniers.Sum(article => (article.Produit?.Prix ?? 0m) * article.Quantite) ?? 0M;
             ViewBag.Total = total;
             ViewBag.TotalEnCents = (long)Math.Round(total * 100M, MidpointRounding.AwayFromZero);
 
@@ -158,9 +158,9 @@ namespace MaBoutique.Controllers
                 ArticlesCommandes = panier.ArticlesPaniers.Select(article => new OrderItemApiModel
                 {
                     ProduitId = article.ProduitId,
-                    NomProduit = article.Produit.Nom,
+                    NomProduit = article.Produit?.Nom ?? string.Empty,
                     Quantite = article.Quantite,
-                    PrixUnitaire = article.Produit.Prix
+                    PrixUnitaire = article.Produit?.Prix ?? 0m
                 }).ToList()
             };
 

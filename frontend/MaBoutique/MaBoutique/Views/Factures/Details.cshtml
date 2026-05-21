@@ -11,8 +11,8 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="card-title">Informations Client</h5>
-            <p><strong>Client :</strong> @Model.Client.Prenom @Model.Client.Nom</p>
-            <p><strong>Email :</strong> @Model.Client.Email</p>
+            <p><strong>Client :</strong> @Model.Client?.Prenom @Model.Client?.Nom</p>
+            <p><strong>Email :</strong> @Model.Client?.Email</p>
             <p><strong>Date de la facture :</strong> @Model.DateFacture.ToString("dd/MM/yyyy")</p>
 
             <hr />
@@ -31,10 +31,10 @@
                     @foreach (var item in Model.ArticlesFactures)
                     {
                         <tr>
-                            <td>@item.Produit.Nom</td>
+                            <td>@item.Produit?.Nom</td>
                             <td>@item.Quantite</td>
-                            <td>@item.Produit.Prix.ToString("C")</td>
-                            <td>@(item.Produit.Prix * item.Quantite).ToString("C")</td>
+                            <td>@item.Produit?.Prix.ToString("C")</td>
+                            <td>@((item.Produit?.Prix ?? 0m) * item.Quantite).ToString("C")</td>
                         </tr>
                     }
                 </tbody>

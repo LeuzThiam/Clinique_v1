@@ -33,7 +33,7 @@
                         <tr>
                             <td>@facture.Id</td>
                             <td>@facture.DateFacture.ToString("dd/MM/yyyy")</td>
-                            <td>@facture.Client.Nom @facture.Client.Prenom</td>
+                            <td>@facture.Client?.Nom @facture.Client?.Prenom</td>
                             <td>@facture.MontantTotal.ToString("C")</td>
                             <td>
                                 <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@facture.Id">Voir</a>

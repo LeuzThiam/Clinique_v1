@@ -23,17 +23,22 @@ namespace MaBoutique.Services
 
             var jsonString = await response.Content.ReadAsStringAsync();
             var jsonObj = JObject.Parse(jsonString);
-            var produitsJson = jsonObj["products"];
+            var produitsJson = jsonObj["products"] as JArray;
+
+            if (produitsJson is null)
+            {
+                return;
+            }
 
             foreach (var item in produitsJson)
             {
                 var produit = new Produit
                 {
-                    Nom = item["title"].ToString(),
-                    Description = item["description"].ToString(),
-                    Prix = item["price"].ToObject<decimal>(),
-                    UrlImage = item["thumbnail"].ToString(),
-                    CategorieNom = item["category"].ToString()
+                    Nom = item["title"]?.ToString() ?? string.Empty,
+                    Description = item["description"]?.ToString() ?? string.Empty,
+                    Prix = item["price"]?.ToObject<decimal>() ?? 0m,
+                    UrlImage = item["thumbnail"]?.ToString() ?? string.Empty,
+                    CategorieNom = item["category"]?.ToString() ?? string.Empty
                 };
 
                 // Vérifie si le produit existe déjà (évite les doublons)

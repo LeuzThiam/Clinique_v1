@@ -16,12 +16,12 @@ namespace MaBoutique.Models
 
         // Lien vers le client
         public int UtilisateurId { get; set; }
-        public Utilisateur Utilisateur { get; set; }
+        public Utilisateur? Utilisateur { get; set; }
 
         // Liste des articles commandés
-        public ICollection<ArticleCommande> ArticlesCommandes { get; set; }
+        public ICollection<ArticleCommande> ArticlesCommandes { get; set; } = new List<ArticleCommande>();
 
         // Relation avec Facture (1-1)
-        public Facture Facture { get; set; }
+        public Facture? Facture { get; set; }
     }
 }

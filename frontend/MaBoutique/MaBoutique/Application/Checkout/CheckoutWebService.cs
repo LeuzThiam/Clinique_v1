@@ -22,7 +22,7 @@ public class CheckoutWebService : ICheckoutWebService
         if (panier == null || !panier.ArticlesPaniers.Any())
             return (false, null);
 
-        var total = panier.ArticlesPaniers.Sum(a => a.Produit.Prix * a.Quantite);
+        var total = panier.ArticlesPaniers.Sum(a => (a.Produit?.Prix ?? 0m) * a.Quantite);
 
         var commande = new Commande
         {
@@ -41,7 +41,7 @@ public class CheckoutWebService : ICheckoutWebService
                 CommandeId = commande.Id,
                 ProduitId = item.ProduitId,
                 Quantite = item.Quantite,
-                PrixUnitaire = item.Produit.Prix
+                PrixUnitaire = item.Produit?.Prix ?? 0m
             });
         }
         await _context.SaveChangesAsync(cancellationToken);

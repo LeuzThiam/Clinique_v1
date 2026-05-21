@@ -20,7 +20,7 @@ namespace MaBoutique.Controllers
         {
             var panier = ObtenirPanier();
 
-            var total = panier.ArticlesPaniers.Sum(a => a.Produit.Prix * a.Quantite);
+            var total = panier.ArticlesPaniers.Sum(a => (a.Produit?.Prix ?? 0m) * a.Quantite);
             ViewBag.Total = total;
 
             return View(panier);

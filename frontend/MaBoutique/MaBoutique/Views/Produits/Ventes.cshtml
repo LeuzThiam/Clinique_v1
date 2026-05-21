@@ -34,16 +34,16 @@
                     @foreach (var article in Model)
                     {
                         <tr>
-                            <td>@article.Produit.Nom</td>
+                            <td>@article.Produit?.Nom</td>
                             <td>@article.Quantite</td>
                             <td>@article.PrixUnitaire.ToString("C", cultureCA)</td>
                             <td>@(article.Quantite * article.PrixUnitaire) $ CA</td>
-                            <td>@article.Commande.DateCommande.ToString("dd/MM/yyyy")</td>
+                            <td>@article.Commande?.DateCommande.ToString("dd/MM/yyyy")</td>
                             <td>
-                                @article.Commande.Utilisateur?.Prenom @article.Commande.Utilisateur?.Nom
+                                @article.Commande?.Utilisateur?.Prenom @article.Commande?.Utilisateur?.Nom
                             </td>
                             <td>
-                                @if (article.Commande.EstPayee)
+                                @if (article.Commande?.EstPayee == true)
                                 {
                                     <span class="badge bg-success">Payée</span>
                                 }

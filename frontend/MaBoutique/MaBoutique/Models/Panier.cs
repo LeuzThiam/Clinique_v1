@@ -10,7 +10,7 @@ namespace MaBoutique.Models
 
         [ForeignKey(nameof(Utilisateur))]
         public int IdUtilisateur { get; set; }
-        public Utilisateur Utilisateur { get; set; }
+        public Utilisateur? Utilisateur { get; set; }
 
         public ICollection<ArticlePanier> ArticlesPaniers { get; set; }
             = new List<ArticlePanier>();

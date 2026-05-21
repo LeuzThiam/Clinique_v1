@@ -9,10 +9,10 @@ namespace MaBoutique.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Le nom du produit est requis.")]
-        public string Nom { get; set; }
+        public string Nom { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "La description est requise.")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Range(0.01, 1000000, ErrorMessage = "Le prix doit etre superieur a zero.")]
         public decimal Prix { get; set; }
@@ -26,27 +26,27 @@ namespace MaBoutique.Models
         [Range(0, int.MaxValue, ErrorMessage = "La quantite en stock doit etre positive.")]
         public int? QuantiteEnStock { get; set; }
 
-        public string Marque { get; set; }
+        public string Marque { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "L'URL de l'image est requise.")]
         [Url(ErrorMessage = "L'URL n'est pas valide.")]
-        public string UrlImage { get; set; }
+        public string UrlImage { get; set; } = string.Empty;
 
         [ValidateNever]
         public List<string> ListeImages { get; set; } = new();
 
         [Required(ErrorMessage = "La categorie est requise.")]
-        public string CategorieNom { get; set; }
+        public string CategorieNom { get; set; } = string.Empty;
 
         public int? VendeurId { get; set; }
 
         [ValidateNever]
-        public Utilisateur Vendeur { get; set; }
+        public Utilisateur? Vendeur { get; set; }
 
         [ValidateNever]
-        public ICollection<ArticleCommande> ArticlesCommandes { get; set; }
+        public ICollection<ArticleCommande> ArticlesCommandes { get; set; } = new List<ArticleCommande>();
 
         [ValidateNever]
-        public ICollection<ArticlePanier> ArticlesPaniers { get; set; }
+        public ICollection<ArticlePanier> ArticlesPaniers { get; set; } = new List<ArticlePanier>();
     }
 }

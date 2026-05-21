@@ -6,11 +6,11 @@
 
         // Lien vers la commande
         public int CommandeId { get; set; }
-        public Commande Commande { get; set; }
+        public Commande? Commande { get; set; }
 
         // Lien vers le produit
         public int ProduitId { get; set; }
-        public Produit Produit { get; set; }
+        public Produit? Produit { get; set; }
 
         // Quantité achetée
         public int Quantite { get; set; }

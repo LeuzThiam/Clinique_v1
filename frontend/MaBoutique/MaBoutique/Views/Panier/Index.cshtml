@@ -30,10 +30,10 @@
                     @foreach (var article in Model.ArticlesPaniers)
                     {
                         <tr>
-                            <td>@article.Produit.Nom</td>
-                            <td>@article.Produit.Prix.ToString("C")</td>
+                            <td>@article.Produit?.Nom</td>
+                            <td>@article.Produit?.Prix.ToString("C")</td>
                             <td>@article.Quantite</td>
-                            <td>@((article.Produit.Prix * article.Quantite).ToString("C"))</td>
+                            <td>@(((article.Produit?.Prix ?? 0m) * article.Quantite).ToString("C"))</td>
                             <td>
                                 <form asp-action="Supprimer" asp-controller="Panier" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
