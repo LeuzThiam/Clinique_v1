@@ -1,6 +1,0 @@
-@EC_Product_Service_HostAddress = http://localhost:5098
-
-GET {{EC_Product_Service_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

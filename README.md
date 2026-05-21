@@ -1,10 +1,9 @@
 # ECommerce
 
-Projet e-commerce C# structure en trois zones a la racine :
+Projet e-commerce C# structure en deux zones principales a la racine :
 
 - `frontend/` : application web ASP.NET Core MVC `MaBoutique`
-- `backend/` : microservices `users`, `products`, `orders`, `payments` et `gateway`
-- `logs/` : fichiers temporaires de lancement et diagnostic
+- `backend/` : API Gateway Ocelot et microservices `users`, `products`, `orders`, `payments`
 
 ## Structure
 
@@ -14,9 +13,8 @@ ECommerce/
 │   └── workflows/
 ├── backend/
 │   └── EC_MicroServices/
-├── frontend/
-│   └── MaBoutique/
-└── logs/
+└── frontend/
+    └── MaBoutique/
 ```
 
 ## Solutions
@@ -103,8 +101,18 @@ La stack Docker utilise un conteneur SQL Server partage par :
 
 ## Architecture
 
+Architecture active du dépôt :
+
+- `Frontend ASP.NET Core MVC` pour l'interface utilisateur
+- `API Gateway Ocelot` comme point d'entrée unique
+- `User Service` pour les comptes et l'authentification
+- `Product Service` pour le catalogue produits
+- `Order Service` pour les commandes
+- `Payment Service` pour les paiements Stripe
+
 Le frontend `MaBoutique` consomme les microservices backend via la passerelle Ocelot (`http://localhost:5000`).
-Les appels produit, utilisateur, commande et paiement passent par le gateway, ce qui sépare la couche de présentation des services métiers.
+
+Note : le dépôt a été nettoyé pour ne garder que les services réellement branchés à la solution, au gateway, à Docker et à la CI.
 
 ## Configuration Stripe
 
@@ -129,3 +137,8 @@ Le workflow GitHub Actions restaure et build :
 
 - le frontend `MaBoutique`
 - le backend `EC_MicroServices`
+
+Le workflow utilise maintenant :
+
+- `actions/checkout@v6`
+- `actions/setup-dotnet@v5`
