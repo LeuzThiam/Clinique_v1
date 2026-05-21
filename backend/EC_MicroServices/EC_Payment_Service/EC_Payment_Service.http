@@ -1,0 +1,13 @@
+@EC_Payment_Service_HostAddress = http://localhost:5004
+
+GET {{EC_Payment_Service_HostAddress}}/api/payments/public-key
+Accept: application/json
+
+###
+
+POST {{EC_Payment_Service_HostAddress}}/api/payments/payment-intent
+Content-Type: application/json
+
+{
+  "amount": 1000
+}

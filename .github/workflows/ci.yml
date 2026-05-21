@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore frontend
+        run: dotnet restore frontend/MaBoutique/MaBoutique.sln
+
+      - name: Restore backend
+        run: dotnet restore backend/EC_MicroServices/EC_MicroServices.sln
+
+      - name: Build frontend
+        run: dotnet build frontend/MaBoutique/MaBoutique.sln --configuration Release --no-restore
+
+      - name: Build backend
+        run: dotnet build backend/EC_MicroServices/EC_MicroServices.sln --configuration Release --no-restore

@@ -1,0 +1,51 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Espace Vendeur";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Bienvenue dans votre espace vendeur</h2>
+        <p class="text-muted">Gérez vos produits, vos ventes et votre profil professionnel.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- Mes Produits -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Mes Produits</h5>
+                    <p class="card-text small">Ajoutez, modifiez ou supprimez les produits que vous proposez à la vente.</p>
+                    <a asp-controller="Produits" asp-action="MesProduits" class="btn btn-outline-primary btn-sm">Gérer mes produits</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mes Ventes -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up display-4 text-success mb-3"></i>
+                    <h5 class="card-title">Mes Ventes</h5>
+                    <p class="card-text small">Consultez vos ventes réalisées et suivez vos gains générés.</p>
+                    <a asp-controller="Produits" asp-action="Ventes" class="btn btn-outline-success btn-sm">Voir mes ventes</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mon Profil Vendeur -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-badge display-4 text-secondary mb-3"></i>
+                    <h5 class="card-title">Mon Profil Vendeur</h5>
+                    <p class="card-text small">Mettez à jour vos informations professionnelles et vos coordonnées.</p>
+                    <a asp-controller="Compte" asp-action="Profil" class="btn btn-outline-secondary btn-sm">Modifier mon profil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

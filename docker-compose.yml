@@ -1,0 +1,109 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ecommerce-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SQL_SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  user-service:
+    build:
+      context: .
+      dockerfile: docker/dotnet-service.Dockerfile
+      args:
+        PROJECT_PATH: backend/EC_MicroServices/EC_User_Service/EC_User_Service.csproj
+        APP_DLL: EC_User_Service.dll
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    ports:
+      - "5001:8080"
+
+  product-service:
+    build:
+      context: .
+      dockerfile: docker/dotnet-service.Dockerfile
+      args:
+        PROJECT_PATH: backend/EC_MicroServices/EC_Product_Service/EC_Product_Service.csproj
+        APP_DLL: EC_Product_Service.dll
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=ec_product_db;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False
+    ports:
+      - "5002:8080"
+    depends_on:
+      - sqlserver
+
+  order-service:
+    build:
+      context: .
+      dockerfile: docker/dotnet-service.Dockerfile
+      args:
+        PROJECT_PATH: backend/EC_MicroServices/EC_Order_Service/EC_Order_Service.csproj
+        APP_DLL: EC_Order_Service.dll
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    ports:
+      - "5003:8080"
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: docker/dotnet-service.Dockerfile
+      args:
+        PROJECT_PATH: backend/EC_MicroServices/EC_Payment_Service/EC_Payment_Service.csproj
+        APP_DLL: EC_Payment_Service.dll
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Stripe__SecretKey: ${STRIPE_SECRET_KEY}
+      Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY}
+    ports:
+      - "5004:8080"
+
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/dotnet-service.Dockerfile
+      args:
+        PROJECT_PATH: backend/EC_MicroServices/EC_GateWay/EC_GateWay.csproj
+        APP_DLL: EC_GateWay.dll
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      USE_DOCKER_ROUTES: "true"
+    ports:
+      - "5000:8080"
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+      - payment-service
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/dotnet-service.Dockerfile
+      args:
+        PROJECT_PATH: frontend/MaBoutique/MaBoutique/MaBoutique.csproj
+        APP_DLL: MaBoutique.dll
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      DisableHttpsRedirection: "true"
+      BackendApi__BaseUrl: http://gateway:8080/
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=MaBoutiqueDb;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False
+    ports:
+      - "5212:8080"
+    depends_on:
+      - sqlserver
+      - gateway
+
+volumes:
+  sqlserver-data:

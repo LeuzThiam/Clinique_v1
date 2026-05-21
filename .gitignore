@@ -1,0 +1,32 @@
+# Build artifacts
+**/bin/
+**/obj/
+
+# Logs
+logs/
+*.log
+
+# User/local files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+*.slnLaunch.user
+
+# IDE
+.vs/
+.vscode/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Generated bundles
+frontend/MaBoutique/MaBoutique/wwwroot/css/site.min.css
+frontend/MaBoutique/MaBoutique/wwwroot/js/site.min.js
